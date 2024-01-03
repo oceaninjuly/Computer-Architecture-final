@@ -81,7 +81,8 @@ SparseMat loading_matrix(string Path){
         if(ptr[tmp] != '\n') val = read_double(ptr,tmp);
         else val = 1;
         mat.data[i-1].push_back(Next{j-1,val});
-        mat.data[j-1].push_back(Next{i-1,val});
+        if(i != j)
+            mat.data[j-1].push_back(Next{i-1,val});
         cnt++;
         if(!(cnt%2000000)){
             cout<<cnt<<" passed.\n";
@@ -217,9 +218,11 @@ unsigned int __stdcall loading_matrix_single_thread(void *IOarg){
         pthread_mutex_lock(&mutex_[mi]);
         mat.data[i-1].push_back(Next{j-1,val});
         pthread_mutex_unlock(&mutex_[mi]);
-        pthread_mutex_lock(&mutex_[mj]);
-        mat.data[j-1].push_back(Next{i-1,val});
-        pthread_mutex_unlock(&mutex_[mj]);
+        if(i != j){
+            pthread_mutex_lock(&mutex_[mj]);
+            mat.data[j-1].push_back(Next{i-1,val});
+            pthread_mutex_unlock(&mutex_[mj]);
+        }
         if(!((index-begin)%2500000)) cout<<index<<" to "<<end<<", "<<(index-begin)<<" passed.\n";
     }
     return 0;

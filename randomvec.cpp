@@ -9,6 +9,7 @@ int len = 20000;
 // int len = 23947347;
 string Path = "./CS_mat_try1/";
 
+
 int main(){
     uniform_real_distribution<double> u(-1, 1); //生成随机落在(-1,1)范围内的浮点数
     default_random_engine e(time(NULL));
