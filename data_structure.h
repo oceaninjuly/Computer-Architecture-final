@@ -19,11 +19,14 @@ typedef std::chrono::_V2::system_clock::time_point TIME;
 struct Next{
     int V;
     double val;
+    bool operator<(const Next&other) const{
+        return V < other.V;
+    }
 };
 
 struct SparseMat{
     int M,N;
-    vector<vector<Next> > data;
+    vector<vector<Next> > data; //存储(i,j,val)
     SparseMat(int m_,int n_):M(m_),N(n_){
         data.resize(M);
     }
@@ -71,15 +74,16 @@ SparseMat loading_matrix(string Path){
     while (cnt!=len_of_file){
         ptr = _data+index_arr[index];
         index++;
-        // sscanf(ptr,"%d%d%lf",&i,&j,&val); //1
+        sscanf(ptr,"%d%d%lf",&i,&j,&val); //1
         //2
-        tmp = 1;
-        i = read_int(ptr,tmp);
-        while(ptr[tmp]==' ') tmp++;
-        j = read_int(ptr,tmp);
-        while(ptr[tmp]==' ') tmp++;
-        if(ptr[tmp] != '\n') val = read_double(ptr,tmp);
-        else val = 1;
+        // tmp = 1;
+        // i = read_int(ptr,tmp);
+        // while(ptr[tmp]==' ') tmp++;
+        // j = read_int(ptr,tmp);
+        // while(ptr[tmp]==' ') tmp++;
+        // if(ptr[tmp] != '\n') val = read_double(ptr,tmp);
+        // else val = 1;
+
         mat.data[i-1].push_back(Next{j-1,val});
         if(i != j)
             mat.data[j-1].push_back(Next{i-1,val});
@@ -204,16 +208,17 @@ unsigned int __stdcall loading_matrix_single_thread(void *IOarg){
     double val;
     //开始计算
     for(int index=begin;index<end;index++){
-        ptr = _data+index_arr[index];
+        ptr = _data+index_arr[index];//让指针指向行首前的换行符
         // sscanf(ptr,"%d%d%lf",&i,&j,&val); //1
         //2
-        tmp = 1;
+        tmp = 1;//表示从换行符后的第一个字符开始
         i = read_int(ptr,tmp);
         while(ptr[tmp]==' ') tmp++;
         j = read_int(ptr,tmp);
         while(ptr[tmp]==' ') tmp++;
         if(ptr[tmp] != '\n') val = read_double(ptr,tmp);
         else val = 1;
+
         mi = (i-1)/mblk;mj=(j-1)/mblk;
         pthread_mutex_lock(&mutex_[mi]);
         mat.data[i-1].push_back(Next{j-1,val});
@@ -243,11 +248,13 @@ double read_double(char *_data,int &index){
     double ret=0;
     double frac = 1;
     if(_data[index] !='.') ret = (double)read_int(_data,index);
-    index++; //跳过浮点
-    while(_data[index]>='0' && _data[index]<='9'){
-        frac /=10;
-        ret += (_data[index]-'0')*frac;
-        index++;
+    if(_data[index] =='.'){
+        index++; //跳过浮点
+        while(_data[index]>='0' && _data[index]<='9'){
+            frac /=10;
+            ret += (_data[index]-'0')*frac;
+            index++;
+        }
     }
     return ret;
 }

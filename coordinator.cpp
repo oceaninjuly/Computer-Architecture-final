@@ -7,6 +7,8 @@
 #include<windows.h>
 #include<thread>
 
+#include<algorithm>
+
 #include"calculation.h"
 #include"data_structure.h"
 
@@ -26,7 +28,7 @@ string prefix = p0+"data_mtx/";
 
 // string data_name = "GAP-road.mtx";
 string data_name = "usps_norm_5NN.mtx";
-// string data_name = "bcspwr05.mtx";
+// string data_name = "YaleB_10NN.mtx";
 
 string Path = prefix+data_name;
 
@@ -119,6 +121,23 @@ int main(){
         }
     }
     auto mat = loading_matrix_multi_thread(Path); //读取矩阵文件
+    //校验手动读取与sscanf/单线程与多线程读
+    // auto mat2 = loading_matrix(Path); //单线程,sscanf读
+    // int fl=1;
+    // for(int i=0;i<mat.M;i++){
+    //     sort(mat.data[i].begin(),mat.data[i].end());//因为ush_back时没有考虑先后
+    //     sort(mat2.data[i].begin(),mat2.data[i].end());
+    //     for(int j=0;j<mat.data[i].size();j++){
+    //         if(abs(mat.data[i][j].val-mat2.data[i][j].val)>1e-6){
+    //             cout<<"wrong "<<i<<","<<mat.data[i][j].V<<"/"<<mat2.data[i][j].V<<" "<<mat.data[i][j].val<<","<<mat2.data[i][j].val<<endl;
+    //             fl=0;
+    //             break;
+    //         } 
+    //     }
+    //     if(fl==0) break;
+    // }
+    // if(fl) cout<<"mat chk correct.\n";
+
     auto vec = loadvec(mat.N,vecpath); //读取向量文件
     //分配任务
     int local_core = thread::hardware_concurrency();

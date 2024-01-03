@@ -5,10 +5,10 @@
 using namespace std;
 using namespace chrono;
 typedef std::chrono::_V2::system_clock::time_point TIME;
-int len = 20000;
-// int len = 23947347;
-string Path = "./CS_mat_try1/";
-
+// int len = 20000;
+int len = 23947347;
+// string Path = "./CS_mat_try1/";
+string Path = "./";
 
 int main(){
     uniform_real_distribution<double> u(-1, 1); //生成随机落在(-1,1)范围内的浮点数

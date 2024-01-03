@@ -63,8 +63,8 @@ unsigned int __stdcall calculation_single_core(void *p){
 }
 
 vector<double> calculation_multi_core(SparseMat& mat,vector<double>& vec,int lower,int upper){
-    //获取核数量
     auto start = system_clock::now();
+    //获取核数量
     int core_num = thread::hardware_concurrency();
     if(retvec != nullptr) delete[] retvec;
     vector<double> vec_res(upper-lower,0);
